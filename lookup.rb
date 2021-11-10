@@ -21,9 +21,15 @@ dns_raw = File.readlines("zone")
 # ..
 # ..
 # FILL YOUR CODE HERE
-# ..
-# ..
+p Resolv.getaddress "www.ruby-lang.org"
+p Resolv.getname "210.251.121.214"
 
+Resolv::DNS.open do |dns|
+  ress = dns.getresources "www.ruby-lang.org", Resolv::DNS::Resource::IN::A
+  p ress.map(&:address)
+  ress = dns.getresources "ruby-lang.org", Resolv::DNS::Resource::IN::MX
+  p ress.map { |r| [r.exchange.to_s, r.preference] }
+end
 # To complete the assignment, implement `parse_dns` and `resolve`.
 # Remember to implement them above this line since in Ruby
 # you can invoke a function only after it is defined.
