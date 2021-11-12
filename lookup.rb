@@ -26,7 +26,7 @@ def parse_dns(dns_raw)
   map {|ln| ln.strip.split(", ") }.
   reject do |rec1|
     #puts rec1
-    rec1.length==0  || rec1[0].start_with?('#')
+    rec1.length==0  || (rec1[0].start_with?('A')== false && rec1[0].start_with?('CNAME')==false)
   end.
   each_with_object ({}) do | rec1, rec2 |
     #puts rec1.to_s + "---" + rec2.to_s
@@ -38,15 +38,15 @@ end
 def resolve (dns_rec, lookup_chain,domain)
   rec1=dns_rec[domain]
   if (!rec1)
-    return["Error: rec not found #{domain}"]
+    ["Error: rec not found #{domain}"]
   elsif rec1 [:type]== "CNAME"
     lookup_chain.push (rec1[:target])
     resolve(dns_rec,lookup_chain,rec1[:target])
   elsif rec1[:type]=="A"
-  lookup_chain.push(rec1[:target])
-  return lookup_chain
+    lookup_chain.push(rec1[:target])
+    lookup_chain
   else
-    rerurn ["Invalid rec type #{domain}"]
+    ["Invalid rec type #{domain}"]
   end
 end
   # ..
